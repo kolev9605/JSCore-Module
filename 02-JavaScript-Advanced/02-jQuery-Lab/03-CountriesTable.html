@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Countries Table</title>
+    <style>
+        td, th { background: #DDD; padding: 5px 10px }
+        input[type='text'] { width: 60px }
+    </style>
+    <script src="jquery-3.1.1.min.js"></script>
+</head>
+<body>
+<table id="countriesTable">
+    <tr>
+        <th>Country</th>
+        <th>Capital</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td><input type="text" id="newCountryText" /></td>
+        <td><input type="text" id="newCapitalText" /></td>
+        <td><a href="#" id="createLink">[Create]</a></td>
+    </tr>
+</table>
+<script>$(() => initializeTable())</script>
+
+<script>
+    function initializeTable() {
+        $('#createLink').click(addRowToTable);
+
+        createRow('Sofia', 'Bulgaria');
+        createRow('Germany', 'Berlin');
+        createRow('Moscow', 'Russia');
+
+        function addRowToTable() {
+            createRow($('#newCountryText').val(), $('#newCapitalText').val())
+        }
+
+        function createRow(country, capital) {
+            let actions = $('<td class(="actionsData">')
+                            .append($('<a href="#" class="moveUp">[Up]</a>').click(moveUp))
+                            .append($('<a href="#" class="moveDown">[Down]</a>').click(moveDown))
+                            .append($('<a href="#" class="delete">[Delete]</a>').click(deleteRow))
+
+            let row = $('<tr>')
+                    .append($('<td>').append(country))
+                    .append($('<td>').append(capital))
+                    .append($(actions))
+
+            $(row).appendTo($('#countriesTable'))
+            fixActions()
+        }
+
+        function fixActions() {
+            let countriesRows = $('#countriesTable tr')
+                    .toArray()
+                    .slice(2)
+
+            $('#countriesTable a').css('display', 'inline')
+
+            $(countriesRows[0]).find("a:contains('Up')").css('display','none')
+            $(countriesRows[countriesRows.length-1]).find("a:contains('Down')").css('display','none')
+        }
+
+        function moveUp() {
+            let row = $(this).parent().parent();
+            $(row).insertBefore($(row).prev())
+            fixActions();
+        }
+
+        function moveDown() {
+            let row = $(this).parent().parent();
+            $(row).insertAfter($(row).next())
+            fixActions();
+        }
+
+        function deleteRow() {
+            let row = $(this).parent().parent();
+            $(row).fadeOut(function () {
+                $(row).remove()
+                fixActions();
+            });
+        }
+    }
+</script>
+</body>
+</html>
